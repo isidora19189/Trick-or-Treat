@@ -1,0 +1,12 @@
+newmtl Tree.mtl
+   Ns 32
+   d 1
+   Tr 0
+   Tf 1 1 1
+   illum 2
+   Ka 1.000 1.000 1.000
+   Kd 1.000 1.000 1.000
+   Ks 0.500 0.500 0.500
+   map_Kd Tree_Bark_lambert_BaseColor.png  # Diffuse texture
+   map_Bump Tree_Bark_lambert_Height.png   # Height map for bump effect
+   map_Normal Tree_Bark_lambert_Normal.png # Normal map

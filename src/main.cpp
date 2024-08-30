@@ -40,6 +40,13 @@ bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
+struct DirectionalLight {
+    glm::vec3 direction;
+
+    glm::vec3 ambient;
+    glm::vec3 diffuse;
+    glm::vec3 specular;
+};
 struct PointLight {
     glm::vec3 position;
     glm::vec3 ambient;
@@ -51,14 +58,37 @@ struct PointLight {
     float quadratic;
 };
 
+struct SpotLight {
+    glm::vec3 position;
+    glm::vec3 direction;
+    float cutoff;
+    float outerCutOff;
+
+    glm::vec3 specular;
+    glm::vec3 diffuse;
+    glm::vec3 ambient;
+
+    float constant;
+    float linear;
+    float quadratic;
+};
+
 struct ProgramState {
     glm::vec3 clearColor = glm::vec3(0);
     bool ImGuiEnabled = false;
     Camera camera;
     bool CameraMouseMovementUpdateEnabled = true;
-    glm::vec3 backpackPosition = glm::vec3(0.0f);
-    float backpackScale = 1.0f;
-    PointLight pointLight;
+    glm::vec3 treePosition = glm::vec3(20.0,-13.0,8.0);
+    float treeScale = 5.5f;
+    glm::vec3 pumpkinPosition = glm::vec3(7.0,-8.0,14.0);
+    float pumpkinScale = 3.0f;
+    glm::vec3 batPosition = glm::vec3(26.0,27.0,0.0);
+    float batScale = 1.2f;
+    glm::vec3 moonPosition = glm::vec3(-6.0,26.0,0.0);
+    float moonScale = 1.8f;
+    glm::vec3 groundPosition = glm::vec3(0.0,-16.0,0.0);
+    float groundScale = 10.0f;
+    DirectionalLight directionalLight;
     ProgramState()
             : camera(glm::vec3(0.0f, 0.0f, 3.0f)) {}
 
@@ -161,22 +191,37 @@ int main() {
 
     // build and compile shaders
     // -------------------------
-    Shader ourShader("resources/shaders/2.model_lighting.vs", "resources/shaders/2.model_lighting.fs");
+    // build and compile shaders
+    // -------------------------
+    Shader treeShader("resources/shaders/tree.vs", "resources/shaders/tree.fs");
+    Shader batShader("resources/shaders/bat.vs", "resources/shaders/bat.fs");
+    Shader moonShader("resources/shaders/moon.vs", "resources/shaders/moon.fs");
+    Shader pumpkinShader("resources/shaders/pumpkin.vs", "resources/shaders/pumpkin.fs");
+    Shader groundShader("resources/shaders/ground.vs", "resources/shaders/ground.fs");
 
     // load models
     // -----------
-    Model ourModel("resources/objects/backpack/backpack.obj");
-    ourModel.SetShaderTextureNamePrefix("material.");
+    Model treeModel("resources/objects/tree/uploads_files_855516_Tree.obj");
+    treeModel.SetShaderTextureNamePrefix("material.");
 
-    PointLight& pointLight = programState->pointLight;
-    pointLight.position = glm::vec3(4.0f, 4.0, 0.0);
-    pointLight.ambient = glm::vec3(0.1, 0.1, 0.1);
-    pointLight.diffuse = glm::vec3(0.6, 0.6, 0.6);
-    pointLight.specular = glm::vec3(1.0, 1.0, 1.0);
+    Model pumpkinModel("resources/objects/pumpkin1/uploads_files_3995722_PumpkinLP.obj");
+    pumpkinModel.SetShaderTextureNamePrefix("material.");
 
-    pointLight.constant = 1.0f;
-    pointLight.linear = 0.09f;
-    pointLight.quadratic = 0.032f;
+    Model batModel("resources/objects/bat/Bat.obj");
+    batModel.SetShaderTextureNamePrefix("material.");
+
+    Model groundModel("resources/objects/ground/terrain.obj");
+    groundModel.SetShaderTextureNamePrefix("material.");
+
+    Model moonModel("resources/objects/moon/Moon.obj");
+    moonModel.SetShaderTextureNamePrefix("material.");
+
+    DirectionalLight& directionalLight = programState->directionalLight;
+    directionalLight.direction = glm::vec3(-10.0f, -5.0f, -2.0f);
+    directionalLight.ambient = glm::vec3(0.2, 0.2, 0.2);
+    directionalLight.diffuse = glm::vec3(0.6, 0.6, 0.6);
+    directionalLight.specular = glm::vec3(2.5);
+
 
 
 
@@ -203,31 +248,146 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // don't forget to enable shader before setting uniforms
-        ourShader.use();
-        pointLight.position = glm::vec3(4.0 * cos(currentFrame), 4.0f, 4.0 * sin(currentFrame));
-        ourShader.setVec3("pointLight.position", pointLight.position);
-        ourShader.setVec3("pointLight.ambient", pointLight.ambient);
-        ourShader.setVec3("pointLight.diffuse", pointLight.diffuse);
-        ourShader.setVec3("pointLight.specular", pointLight.specular);
-        ourShader.setFloat("pointLight.constant", pointLight.constant);
-        ourShader.setFloat("pointLight.linear", pointLight.linear);
-        ourShader.setFloat("pointLight.quadratic", pointLight.quadratic);
-        ourShader.setVec3("viewPosition", programState->camera.Position);
-        ourShader.setFloat("material.shininess", 32.0f);
+        // bat shader
+        batShader.use();
+        batShader.setVec3("directionalLight.direction",directionalLight.direction);
+        batShader.setVec3("directionalLight.ambient",directionalLight.ambient);
+        batShader.setVec3("directionalLight.diffuse",directionalLight.diffuse);
+        batShader.setVec3("directionalLight.specular",directionalLight.specular);
+
+        batShader.setVec3("viewPosition", programState->camera.Position);
+        batShader.setFloat("material.shininess", 32.0f);
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(programState->camera.Zoom),
                                                 (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = programState->camera.GetViewMatrix();
-        ourShader.setMat4("projection", projection);
-        ourShader.setMat4("view", view);
+        batShader.setMat4("projection", projection);
+        batShader.setMat4("view", view);
 
-        // render the loaded model
+        //render bat models
+
+        float time = glfwGetTime();
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model,
-                               programState->backpackPosition); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(programState->backpackScale));    // it's a bit too big for our scene, so scale it down
-        ourShader.setMat4("model", model);
-        ourModel.Draw(ourShader);
+        model = glm::translate(model,glm::vec3((programState->batPosition.x)*cos(time),programState->batPosition.y,(programState->batPosition.x)*sin(time)));
+        model = glm::rotate(model, glm::radians(70.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model,glm::vec3(programState->batScale));
+        batShader.setMat4("model", model);
+        batModel.Draw(batShader);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model,glm::vec3(-20.0f*cos(time),14.0f,2.0f*sin(time)));
+        model = glm::rotate(model, glm::radians(70.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model,glm::vec3(programState->batScale));
+        batShader.setMat4("model", model);
+        batModel.Draw(batShader);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model,glm::vec3(-35.0f*cos(time),20.0f,0.0f*sin(time)));
+        model = glm::rotate(model, glm::radians(70.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model,glm::vec3(programState->batScale));
+        batShader.setMat4("model", model);
+        batModel.Draw(batShader);
+
+        // moon shader
+        moonShader.use();
+        moonShader.setVec3("directionalLight.direction",glm::vec3(-1.0f,-0.5f,-1.0f));
+        moonShader.setVec3("directionalLight.ambient",glm::vec3(0.1f,0.1f,0.1f));
+        moonShader.setVec3("directionalLight.diffuse",glm::vec3(0.9f,0.7f,0.5f));
+        moonShader.setVec3("directionalLight.specular",glm::vec3(0.05f,0.05f,0.05f));
+
+        moonShader.setVec3("viewPosition", programState->camera.Position);
+        moonShader.setFloat("material.shininess", 256.0f);
+        moonShader.setFloat("material.specular", 1.0f);
+
+
+        moonShader.setMat4("projection", projection);
+        moonShader.setMat4("view", view);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model,glm::vec3(programState->moonPosition));
+        model = glm::rotate(model, glm::radians(float(20 * (glfwGetTime()))), glm::vec3(0.0, 1.0, 0.0));
+        model = glm::scale(model,glm::vec3(programState->moonScale));
+        moonShader.setMat4("model", model);
+        moonModel.Draw(moonShader);
+
+        // tree shader
+        treeShader.use();
+        treeShader.setVec3("directionalLight.direction",glm::vec3(-1.0f,-0.5f,-1.0f));
+        treeShader.setVec3("directionalLight.ambient",glm::vec3(0.1f,0.1f,0.1f));
+        treeShader.setVec3("directionalLight.diffuse",glm::vec3(0.9f,0.7f,0.5f));
+        treeShader.setVec3("directionalLight.specular",glm::vec3(0.05f,0.05f,0.05f));
+
+        treeShader.setVec3("viewPosition", programState->camera.Position);
+        treeShader.setFloat("material.shininess", 32.0f);
+
+        treeShader.setMat4("projection", projection);
+        treeShader.setMat4("view", view);
+
+
+        //render tree model
+        model = glm::mat4(1.0f);
+        model = glm::translate(model,glm::vec3(programState->treePosition));
+        model = glm::scale(model,glm::vec3(programState->treeScale));
+        treeShader.setMat4("model", model);
+        treeModel.Draw(treeShader);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model,glm::vec3(-29.0f,-12.0f,6.0f));
+        model = glm::scale(model,glm::vec3(4.5f));
+        treeShader.setMat4("model", model);
+        treeModel.Draw(treeShader);
+
+        //ground shader
+        groundShader.use();
+        groundShader.setVec3("directionalLight.direction",glm::vec3(-1.0f,-0.5f,-1.0f));
+        groundShader.setVec3("directionalLight.ambient",glm::vec3(0.1f,0.1f,0.1f));
+        groundShader.setVec3("directionalLight.diffuse",glm::vec3(0.9f,0.7f,0.5f));
+        groundShader.setVec3("directionalLight.specular",glm::vec3(0.05f,0.05f,0.05f));
+
+        groundShader.setVec3("viewPosition", programState->camera.Position);
+        groundShader.setFloat("material.shininess", 32.0f);
+
+        groundShader.setMat4("projection", projection);
+        groundShader.setMat4("view", view);
+        //render ground model
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model,glm::vec3(programState->groundPosition));
+        //model = glm::rotate(model, glm::radians(45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        //model = glm::rotate(model, glm::radians(-50.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        model = glm::scale(model,glm::vec3(programState->groundScale));
+        groundShader.setMat4("model", model);
+        groundModel.Draw(moonShader);
+
+
+
+
+        //pumpkin shader
+        pumpkinShader.use();
+        pumpkinShader.setVec3("directionalLight.direction",glm::vec3(-1.0f,-0.5f,-1.0f));
+        pumpkinShader.setVec3("directionalLight.ambient",glm::vec3(0.1f,0.1f,0.1f));
+        pumpkinShader.setVec3("directionalLight.diffuse",glm::vec3(0.9f,0.7f,0.5f));
+        pumpkinShader.setVec3("directionalLight.specular",glm::vec3(0.05f,0.05f,0.05f));
+
+
+        pumpkinShader.setVec3("viewPosition", programState->camera.Position);
+        pumpkinShader.setFloat("material.shininess", 32.0f);
+
+        pumpkinShader.setMat4("projection", projection);
+        pumpkinShader.setMat4("view", view);
+
+        //render pumpkin model
+        model = glm::mat4(1.0f);
+        model = glm::translate(model,glm::vec3(programState->pumpkinPosition));
+        model = glm::scale(model,glm::vec3(programState->pumpkinScale));
+        pumpkinShader.setMat4("model", model);
+        pumpkinModel.Draw(pumpkinShader);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model,glm::vec3(13.0,-7.0,10.0));
+        model = glm::scale(model,glm::vec3(4.0,4.0,4.0));
+        pumpkinShader.setMat4("model", model);
+        pumpkinModel.Draw(pumpkinShader);
 
         if (programState->ImGuiEnabled)
             DrawImGui(programState);
@@ -304,32 +464,6 @@ void DrawImGui(ProgramState *programState) {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-
-
-    {
-        static float f = 0.0f;
-        ImGui::Begin("Hello window");
-        ImGui::Text("Hello text");
-        ImGui::SliderFloat("Float slider", &f, 0.0, 1.0);
-        ImGui::ColorEdit3("Background color", (float *) &programState->clearColor);
-        ImGui::DragFloat3("Backpack position", (float*)&programState->backpackPosition);
-        ImGui::DragFloat("Backpack scale", &programState->backpackScale, 0.05, 0.1, 4.0);
-
-        ImGui::DragFloat("pointLight.constant", &programState->pointLight.constant, 0.05, 0.0, 1.0);
-        ImGui::DragFloat("pointLight.linear", &programState->pointLight.linear, 0.05, 0.0, 1.0);
-        ImGui::DragFloat("pointLight.quadratic", &programState->pointLight.quadratic, 0.05, 0.0, 1.0);
-        ImGui::End();
-    }
-
-    {
-        ImGui::Begin("Camera info");
-        const Camera& c = programState->camera;
-        ImGui::Text("Camera position: (%f, %f, %f)", c.Position.x, c.Position.y, c.Position.z);
-        ImGui::Text("(Yaw, Pitch): (%f, %f)", c.Yaw, c.Pitch);
-        ImGui::Text("Camera front: (%f, %f, %f)", c.Front.x, c.Front.y, c.Front.z);
-        ImGui::Checkbox("Camera mouse update", &programState->CameraMouseMovementUpdateEnabled);
-        ImGui::End();
-    }
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
