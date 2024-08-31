@@ -1,1 +1,1 @@
-const char * logl_root = "/home/matf-racunarska-grafika/Desktop/Trick-or-Treat";
+const char * logl_root = "/home/matf-racunarska-grafika/Trick-or-Treat";

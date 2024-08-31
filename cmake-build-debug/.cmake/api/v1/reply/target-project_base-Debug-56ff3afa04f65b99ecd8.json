@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "/home/matf-racunarska-grafika/Desktop/Trick-or-Treat/project_base"
+			"path" : "/home/matf-racunarska-grafika/Trick-or-Treat/project_base"
 		}
 	],
 	"backtrace" : 1,
@@ -98,19 +98,19 @@
 			[
 				{
 					"backtrace" : 7,
-					"path" : "/home/matf-racunarska-grafika/Desktop/Trick-or-Treat/cmake-build-debug/configuration"
+					"path" : "/home/matf-racunarska-grafika/Trick-or-Treat/cmake-build-debug/configuration"
 				},
 				{
 					"backtrace" : 8,
-					"path" : "/home/matf-racunarska-grafika/Desktop/Trick-or-Treat/include"
+					"path" : "/home/matf-racunarska-grafika/Trick-or-Treat/include"
 				},
 				{
 					"backtrace" : 2,
-					"path" : "/home/matf-racunarska-grafika/Desktop/Trick-or-Treat/libs/glad/include"
+					"path" : "/home/matf-racunarska-grafika/Trick-or-Treat/libs/glad/include"
 				},
 				{
 					"backtrace" : 2,
-					"path" : "/home/matf-racunarska-grafika/Desktop/Trick-or-Treat/libs/imgui/include"
+					"path" : "/home/matf-racunarska-grafika/Trick-or-Treat/libs/imgui/include"
 				}
 			],
 			"language" : "CXX",

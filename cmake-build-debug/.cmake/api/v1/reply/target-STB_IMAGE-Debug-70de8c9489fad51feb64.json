@@ -62,11 +62,11 @@
 			[
 				{
 					"backtrace" : 2,
-					"path" : "/home/matf-racunarska-grafika/Desktop/Trick-or-Treat/cmake-build-debug/configuration"
+					"path" : "/home/matf-racunarska-grafika/Trick-or-Treat/cmake-build-debug/configuration"
 				},
 				{
 					"backtrace" : 3,
-					"path" : "/home/matf-racunarska-grafika/Desktop/Trick-or-Treat/include"
+					"path" : "/home/matf-racunarska-grafika/Trick-or-Treat/include"
 				}
 			],
 			"language" : "CXX",

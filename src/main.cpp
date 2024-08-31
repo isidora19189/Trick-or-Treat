@@ -223,7 +223,7 @@ int main() {
 
     // configure floating point framebuffer
     // ------------------------------------
-    /* POCETAK BLOOM
+
     unsigned int hdrFBO;
     glGenFramebuffers(1, &hdrFBO);
     // create floating point color buffer
@@ -273,7 +273,7 @@ int main() {
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
             std::cout << "Framebuffer not complete!" << std::endl;
     }
-     KRAJ BLOOM*/
+
 
     // load models
     // -----------
@@ -548,7 +548,7 @@ int main() {
 
         // 2. blur bright fragments with two-pass Gaussian Blur
         // --------------------------------------------------
-        /*pocetak bloom
+
         bool horizontal = true, first_iteration = true;
         unsigned int amount = 10;
         blurShader.use();
@@ -575,7 +575,7 @@ int main() {
         bloomShader.setInt("bloom", bloom);
         bloomShader.setFloat("exposure", exposure);
         renderQuad();
-         kraj bloom*/
+
 
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
