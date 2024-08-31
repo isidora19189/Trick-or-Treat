@@ -24,7 +24,7 @@ in vec3 FragPos;
 uniform DirectionalLight directionalLight;
 uniform Material material;
 uniform vec3 viewPosition;
-
+uniform float alpha;
 vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
     vec3 lightDir = normalize(-light.direction);
@@ -47,7 +47,7 @@ void main() {
     vec3 yellowColor = vec3(0.9f,1.0f,0.6f)*0.2;
     vec3 finalColor = mix(whiteColor,yellowColor,0.2);
     vec3 result = finalColor * lighting;
-    FragColor = vec4(result, 1.0f);
+    FragColor = vec4(result, alpha);
     float brightness = dot(result, vec3(0.2126, 0.7152, 0.0722));
     if (brightness > 1.0) {
         BrightColor = vec4(result, 1.0f);

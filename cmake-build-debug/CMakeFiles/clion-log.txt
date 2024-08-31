@@ -1,4 +1,4 @@
-/opt/clion-2022.2.4/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/opt/clion-2022.2.4/bin/ninja/linux/ninja -G Ninja -S /home/matf-racunarska-grafika/Desktop/Trick-or-Treat -B /home/matf-racunarska-grafika/Desktop/Trick-or-Treat/cmake-build-debug
+/opt/clion-2022.2.4/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/opt/clion-2022.2.4/bin/ninja/linux/ninja -DCMAKE_BUILD_PARALLEL_LEVEL=8 -G Ninja -S /home/matf-racunarska-grafika/Desktop/Trick-or-Treat -B /home/matf-racunarska-grafika/Desktop/Trick-or-Treat/cmake-build-debug
 -- The C compiler identification is GNU 9.4.0
 -- The CXX compiler identification is GNU 9.4.0
 -- Detecting C compiler ABI info
@@ -16,4 +16,10 @@
 -- Found ASSIMP: /usr/lib/x86_64-linux-gnu/libassimp.so
 -- Configuring done
 -- Generating done
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    CMAKE_BUILD_PARALLEL_LEVEL
+
+
 -- Build files have been written to: /home/matf-racunarska-grafika/Desktop/Trick-or-Treat/cmake-build-debug

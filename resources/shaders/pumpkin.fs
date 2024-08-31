@@ -11,7 +11,10 @@ struct DirectionalLight {
 
 struct Material {
     sampler2D texture_diffuse1;
-    sampler2D texture_specular1;
+    sampler2D texture_emissive1;
+    sampler2D texture_normal1;
+
+
     vec3 specular;
 
     float shininess;
@@ -24,7 +27,6 @@ uniform DirectionalLight directionalLight;
 uniform Material material;
 
 uniform vec3 viewPosition;
-// calculates the color when using a point light.
 
 vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
@@ -43,8 +45,10 @@ vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal, vec3 fragPos, vec
 
 void main()
 {
-    vec3 normal = normalize(Normal);
+    vec3 normal = texture(material.texture_normal1, TexCoords).rgb;
+    normal = normalize(Normal);
     vec3 viewDir = normalize(viewPosition - FragPos);
     vec3 result = CalcDirectionalLight(directionalLight, normal, FragPos, viewDir);
-    FragColor = vec4(result, 1.0);
+    //vec3 emissive = vec3(texture(material.texture_emissive1, TexCoords));
+    FragColor = vec4(result, 1.0f);
 }

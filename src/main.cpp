@@ -80,12 +80,12 @@ struct ProgramState {
     bool CameraMouseMovementUpdateEnabled = true;
     glm::vec3 treePosition = glm::vec3(20.0,-13.0,8.0);
     float treeScale = 5.5f;
-    glm::vec3 pumpkinPosition = glm::vec3(7.0,-8.0,14.0);
-    float pumpkinScale = 3.0f;
+    glm::vec3 pumpkinPosition = glm::vec3(8.0,-10.0,14.0);
+    float pumpkinScale = 0.04f;
     glm::vec3 batPosition = glm::vec3(26.0,27.0,0.0);
     float batScale = 1.2f;
-    glm::vec3 moonPosition = glm::vec3(-6.0,26.0,0.0);
-    float moonScale = 1.8f;
+    glm::vec3 moonPosition = glm::vec3(-6.0,29.0,0.0);
+    float moonScale = 2.0f;
     glm::vec3 groundPosition = glm::vec3(0.0,-16.0,0.0);
     float groundScale = 10.0f;
     DirectionalLight directionalLight;
@@ -204,7 +204,7 @@ int main() {
     Model treeModel("resources/objects/tree/uploads_files_855516_Tree.obj");
     treeModel.SetShaderTextureNamePrefix("material.");
 
-    Model pumpkinModel("resources/objects/pumpkin1/uploads_files_3995722_PumpkinLP.obj");
+    Model pumpkinModel("resources/objects/bundeva/Pumpkin.obj");
     pumpkinModel.SetShaderTextureNamePrefix("material.");
 
     Model batModel("resources/objects/bat/Bat.obj");
@@ -222,6 +222,21 @@ int main() {
     directionalLight.diffuse = glm::vec3(0.6, 0.6, 0.6);
     directionalLight.specular = glm::vec3(2.5);
 
+    //blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    //face culling
+
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
+
+    // texture parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 
 
@@ -303,6 +318,8 @@ int main() {
         moonShader.setMat4("projection", projection);
         moonShader.setMat4("view", view);
 
+        moonShader.setFloat("alpha",0.5f);
+
         model = glm::mat4(1.0f);
         model = glm::translate(model,glm::vec3(programState->moonPosition));
         model = glm::rotate(model, glm::radians(float(20 * (glfwGetTime()))), glm::vec3(0.0, 1.0, 0.0));
@@ -322,6 +339,23 @@ int main() {
 
         treeShader.setMat4("projection", projection);
         treeShader.setMat4("view", view);
+
+        unsigned int diffuseTextureID = TextureFromFile("Tree_Bark_lambert_BaseColor.png", "resources/objects/tree");
+        unsigned int heightTextureID = TextureFromFile("Tree_Bark_lambert_Height.png", "resources/objects/tree");
+        unsigned int normalTextureID = TextureFromFile("Tree_Bark_lambert_Normal.png", "resources/objects/tree");
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, diffuseTextureID);
+        treeShader.setInt("material.texture_diffuse1", 0); 
+
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, heightTextureID);
+        treeShader.setInt("material.texture_height1", 1);
+
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, normalTextureID);
+        treeShader.setInt("normal.texture_height1", 2);
+
 
 
         //render tree model
@@ -349,6 +383,18 @@ int main() {
 
         groundShader.setMat4("projection", projection);
         groundShader.setMat4("view", view);
+
+        diffuseTextureID = TextureFromFile("iceland1_t.png", "resources/objects/ground");
+        unsigned int specularTextureID = TextureFromFile("specular.png", "resources/objects/ground");
+        /*
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, diffuseTextureID);
+        groundShader.setInt("material.texture_diffuse1", 0);
+
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, specularTextureID);
+        groundShader.setInt("material.texture_specular1", 1);*/
+
         //render ground model
 
         model = glm::mat4(1.0f);
@@ -361,13 +407,17 @@ int main() {
 
 
 
-
-        //pumpkin shader
         pumpkinShader.use();
         pumpkinShader.setVec3("directionalLight.direction",glm::vec3(-1.0f,-0.5f,-1.0f));
         pumpkinShader.setVec3("directionalLight.ambient",glm::vec3(0.1f,0.1f,0.1f));
         pumpkinShader.setVec3("directionalLight.diffuse",glm::vec3(0.9f,0.7f,0.5f));
         pumpkinShader.setVec3("directionalLight.specular",glm::vec3(0.05f,0.05f,0.05f));
+        pumpkinShader.setInt("material.texture_diffuse1", 0);
+        pumpkinShader.setInt("material.texture_specular1", 1);
+        pumpkinShader.setInt("material.texture_normal1", 2);
+        pumpkinShader.setInt("material.texture_emissive1", 3);
+
+        pumpkinShader.setFloat("alpha",0.9f);
 
 
         pumpkinShader.setVec3("viewPosition", programState->camera.Position);
@@ -376,16 +426,35 @@ int main() {
         pumpkinShader.setMat4("projection", projection);
         pumpkinShader.setMat4("view", view);
 
+        diffuseTextureID = TextureFromFile("Pumpkin_diff_sketfab.jpg", "resources/objects/bundeva");
+        unsigned int emissiveTextureID = TextureFromFile("Pumpkin_lum_Sketchfab.jpg", "resources/objects/bundeva");
+        normalTextureID = TextureFromFile("Pumpkin_nrml.jpg", "resources/objects/bundeva");
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, diffuseTextureID);
+        pumpkinShader.setInt("material.texture_diffuse1", 0);
+
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, emissiveTextureID);
+        pumpkinShader.setInt("material.texture_emissive1", 1);
+
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, normalTextureID);
+        pumpkinShader.setInt("normal.texture_height1", 2);
+
+
         //render pumpkin model
         model = glm::mat4(1.0f);
         model = glm::translate(model,glm::vec3(programState->pumpkinPosition));
+        //model = glm::rotate(model, glm::radians(40.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::scale(model,glm::vec3(programState->pumpkinScale));
         pumpkinShader.setMat4("model", model);
         pumpkinModel.Draw(pumpkinShader);
 
         model = glm::mat4(1.0f);
-        model = glm::translate(model,glm::vec3(13.0,-7.0,10.0));
-        model = glm::scale(model,glm::vec3(4.0,4.0,4.0));
+        model = glm::translate(model,glm::vec3(-34.0f,-8.0f,10.0f));
+        model = glm::rotate(model, glm::radians(35.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::scale(model,glm::vec3(programState->pumpkinScale));
         pumpkinShader.setMat4("model", model);
         pumpkinModel.Draw(pumpkinShader);
 
