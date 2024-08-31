@@ -12,6 +12,7 @@ Projekat za kurs Racunarske grafike
 
 # Modeli
 Modeli preuzeti sa https://sketchfab.com/, https://free3d.com/3d-models/, https://www.cgtrader.com/
+
 Model zemlje pozajmljen sa adrese: https://github.com/milica-vucic/computer_graphics_2022
 
 # Metode
