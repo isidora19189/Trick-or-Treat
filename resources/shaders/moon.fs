@@ -45,7 +45,7 @@ void main() {
     vec3 lighting = CalcDirectionalLight(directionalLight, normal, FragPos, viewDir);
     vec3 whiteColor = vec3(1.0f,1.0f,1.0f);
     vec3 yellowColor = vec3(0.9f,1.0f,0.6f)*0.2;
-    vec3 finalColor = mix(whiteColor,yellowColor,0.2);
+    vec3 finalColor = mix(whiteColor,yellowColor,0.1);
     vec3 result = finalColor * lighting;
     FragColor = vec4(result, alpha);
     float brightness = dot(result, vec3(0.2126, 0.7152, 0.0722));

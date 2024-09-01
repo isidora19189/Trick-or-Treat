@@ -49,6 +49,6 @@ void main()
     normal = normalize(Normal);
     vec3 viewDir = normalize(viewPosition - FragPos);
     vec3 result = CalcDirectionalLight(directionalLight, normal, FragPos, viewDir);
-    //vec3 emissive = vec3(texture(material.texture_emissive1, TexCoords));
-    FragColor = vec4(result, 1.0f);
+    vec3 emissive = vec3(texture(material.texture_emissive1, TexCoords))*0.1;
+    FragColor = vec4(result+emissive, 1.0f);
 }
