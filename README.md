@@ -15,7 +15,11 @@ Modeli preuzeti sa https://sketchfab.com/, https://free3d.com/3d-models/, https:
 
 Model zemlje pozajmljen sa adrese: https://github.com/milica-vucic/computer_graphics_2022
 
+SkyBox implementiran po uzoru na:  https://github.com/matf-racunarska-grafika-galerija/matf-rg-projekat
+
+
 # Metode
-Implementirane metode HDR i Bloom efekta, kao i Blinn Phongov model osvetljenja
+Implementirane metode HDR i Bloom efekta, Blinn Phongov model osvetljenja, SkyBox i Parallax Mapping
+
 
 
